@@ -140,7 +140,7 @@ class ScraperSync(ScraperBase):
         # run scraper for all pages in the base_url
 
         last_page = self._get_last_page_num()
-        last_page = 4
+        #last_page = 4
         # first page doesnt work through URL param
         all_data = []
 
@@ -164,7 +164,7 @@ def main():
     album_data_dicts = [album.__dict__ for album in data]
     df = pd.DataFrame(album_data_dicts)
     print(df)
-    df.to_csv("album_data.csv", index=False)
+    df.to_csv("album_data.csv", encoding = "UTF-16", index=False)
 
 if __name__ == ("__main__"):
     main()
