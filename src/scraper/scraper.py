@@ -3,24 +3,10 @@ from abc import ABC, abstractmethod
 import requests
 import time
 from bs4 import BeautifulSoup
-from dataclasses import dataclass
 import pandas as pd
 from urllib.parse import urlparse
 
-
-@dataclass
-class Album:
-    title: str
-    artist: str
-    sales: int
-    cover_url: str
-    rank_release_year: int
-    rank_decade: int
-    rank_overall: int
-
-
-
-
+from common.album import Album
 
 class ScraperBase(ABC):
 
