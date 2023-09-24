@@ -1,4 +1,6 @@
 import sys
+import os
+from pathlib import Path
 from abc import ABC, abstractmethod
 import requests
 import time
@@ -6,6 +8,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from urllib.parse import urlparse
 
+
+print (sys.path)
 from common.album import Album
 
 class ScraperBase(ABC):
