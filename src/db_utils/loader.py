@@ -1,24 +1,13 @@
 #from common.album import Album
 
-from sqlalchemy import Column, Integer, String
+
 from sqlalchemy.orm import sessionmaker
 #from db_utils.db import Session
 import csv
-from db_utils.db import Base, db_connect, create_albums_table
+from db_utils.db import db_connect, create_albums_table, get_session
+from db_utils.models import AlbumModel
 
 
-
-class Album(Base):
-    __tablename__ = 'albums'
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    artist = Column(String)
-    sales = Column(Integer)
-    cover_url = Column(String)
-    rank_release_year = Column(Integer)
-    rank_decade = Column(Integer)
-    rank_overall = Column(Integer)
 
 def load_data_from_csv(csv_filename):
     #session = Session()
@@ -29,7 +18,7 @@ def load_data_from_csv(csv_filename):
 
         for row in csvreader:
             #print(row)
-            album = Album(
+            album = AlbumModel(
                 title=row['title'],
                 artist=row['artist'],
                 sales=int(row['sales'].replace(',', '')),
@@ -42,26 +31,27 @@ def load_data_from_csv(csv_filename):
 
     #session.commit()
     #session.close()
-    insert_album(albumData)
+    return albumData
+    
+
+class SomeClass:
+    attribute : int
+    def __init__(self, title):
+        self.title = title
+
 
 def insert_album(albumData):
-    engine = db_connect()
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    Session = get_session()
     #create_albums_table(engine)
 
-    try:
-        session.add_all(albumData)
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+    # replaces the commit/rollback/close block with context manager
+    with Session.begin() as session:
+        session.add_all(albumData)    
 
 if __name__ == "__main__":
     engine = db_connect()
     create_albums_table(engine)
 
     csv_filename = "album_data.csv"  # Replace with your CSV file path
-    load_data_from_csv(csv_filename)
+    albumData = load_data_from_csv(csv_filename)
+    insert_album(albumData)
