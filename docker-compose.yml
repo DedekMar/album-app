@@ -5,7 +5,7 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_DB: my_database
-      env_file: ./src/.env
+      env_file: ./src/backend/.env
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     ports:

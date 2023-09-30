@@ -13,7 +13,7 @@ def load_data_from_csv(csv_filename):
     #session = Session()
     albumData = []
     with open(csv_filename, mode='r', encoding='utf-16') as csv_file:
-        csvreader = csv.DictReader(csv_file, delimiter=',')
+        csvreader = csv.DictReader(csv_file, delimiter='\t')
 
 
         for row in csvreader:
@@ -25,7 +25,10 @@ def load_data_from_csv(csv_filename):
                 cover_url=row['cover_url'],
                 rank_release_year=int(row['rank_release_year']),
                 rank_decade=int(row['rank_decade']),
-                rank_overall=int(row['rank_overall'])
+                rank_overall=int(row['rank_overall']),
+                release_year = int(row["release_year"]),
+                scraped_album_id = int(row["scraped_album_id"]),
+                scraped_artist_id = int(row["scraped_artist_id"])
             )
             albumData.append(album)
 

@@ -9,7 +9,7 @@ import pandas as pd
 from urllib.parse import urlparse
 
 
-print (sys.path)
+#print (sys.path)
 from common.album import Album
 
 class ScraperBase(ABC):
@@ -84,7 +84,9 @@ class ScraperSync(ScraperBase):
         album_info = album_card.find(class_='data_col')
 
         title = album_info.find(class_='album').find('a').text.strip()
+        album_scraped_id = int(album_info.find(class_='album').find('a')["href"].split('/')[-1])
         artist = album_info.find(class_='artist').find('a').text.strip()
+        artist_scraped_id = int(album_info.find(class_='artist').find('a')["href"].split('/')[-1])
         sales_text = album_info.find(class_='sales').text.strip()
         sales = int(sales_text.replace('Sales: ', '').replace(',', ''))
 
@@ -92,8 +94,11 @@ class ScraperSync(ScraperBase):
         ranks = ranks_row.find_all(class_='ranks')
 
         rank_release_year = int(ranks[0].text.split(':')[-1].strip())
+        release_year_a = ranks[0].find("a")
+        release_year = int(release_year_a["href"].split('/')[-1])
         rank_decade = int(ranks[1].text.split(':')[-1].strip())
         rank_overall = int(ranks[2].text.split(':')[-1].strip())
+
 
         # Create and return an Album instance
         album = Album(
@@ -101,9 +106,12 @@ class ScraperSync(ScraperBase):
             artist=artist,
             sales=sales,
             cover_url=cover_url,
+            release_year=release_year,
             rank_release_year=rank_release_year,
             rank_decade=rank_decade,
             rank_overall=rank_overall,
+            artist_scraped_id=artist_scraped_id,
+            album_scraped_id=album_scraped_id
         )
         return album
 
@@ -130,7 +138,7 @@ class ScraperSync(ScraperBase):
         # run scraper for all pages in the base_url
 
         last_page = self._get_last_page_num()
-        #last_page = 4
+        #last_page = 2
         # first page doesnt work through URL param
         all_data = []
 
@@ -154,7 +162,7 @@ def main():
     album_data_dicts = [album.__dict__ for album in data]
     df = pd.DataFrame(album_data_dicts)
     print(df)
-    df.to_csv("album_data.csv", encoding = "UTF-16", index=False)
+    df.to_csv("album_data.csv", encoding = "UTF-16", index=False, delimiter='\t')
 
 if __name__ == ("__main__"):
     main()

@@ -27,4 +27,7 @@ def read_albums(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     albums = crud.get_albums(db = db, skip = skip, limit = limit)
     return albums
 
-
+@app.get("/albums/year/", response_model= list[album_schema.AlbumBase])
+def read_albums_by_year(year : int, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    albums = crud.get_best_albums_in_year(db = db, year = year,  skip = skip, limit = limit)
+    return albums
