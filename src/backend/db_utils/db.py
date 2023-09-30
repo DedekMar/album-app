@@ -34,8 +34,11 @@ def create_albums_table(engine: Engine):
 
     Base.metadata.create_all(engine)
 
-def get_session(autocommit=True, autoflush=True):
-
+def get_session_maker(autocommit = False, autoflush = False):
     engine = db_connect()
-    Session = sessionmaker(autocommit=autocommit, autoflush=autoflush, bind=engine)
+    sesmaker = sessionmaker(autocommit=autocommit, autoflush=autoflush, bind=engine)
+    return sesmaker
+
+def get_session(autocommit=False, autoflush=False):
+    Session = get_session_maker(autocommit=False, autoflush=False)
     return Session()

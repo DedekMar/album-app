@@ -8,6 +8,7 @@ class AlbumBase(BaseModel):
     artist: str
     sales: int
     cover_url: str
+    id: int
 
     class Config:
         orm_mode = True
