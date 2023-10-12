@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+//import reactLogo from "./assets/react.svg";
+//import viteLogo from "/vite.svg";
 import "./App.css";
 import Album from "./Album.jsx";
 import AlbumDetail from "./albumDetail";
+import AlbumSearch from "./AlbumSearch";
 
 function App() {
-  const [count, setCount] = useState(0);
+  //const [count, setCount] = useState(0);
   //const [data, setData] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [isDetail, setIsDetail] = useState(false);
   const [selectedAlbumId, setSelectedAlbumId] = useState(null);
+  const [albumSearchText, setAlbumSearchText] = useState("");
+  const [albumsSearchResult, setAlbumsSearchResult] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,30 +46,43 @@ function App() {
     setIsDetail(false);
     setSelectedAlbumId(null);
   }
+  function handleSearchTextChange(e) {
+    //console.log(e);
+    setAlbumSearchText(e.target.value);
+    if (e.target.value.length == 0) {
+      setAlbumsSearchResult([]);
+    }
+  }
+
+  async function handleSearch() {
+    //console.log(e);
+    const res = await fetch(
+      `http://127.0.0.1:8000/album/title/?title=${albumSearchText}`
+    );
+    //console.log(res);
+    const albumSearchData = await res.json();
+    console.log(albumSearchData);
+    setAlbumsSearchResult(albumSearchData);
+  }
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <AlbumSearch
+          onTextChange={handleSearchTextChange}
+          onSearch={handleSearch}
+          searchValue={albumSearchText}
+        />
+        {albumsSearchResult.length > 0 ? (
+          <ul>
+            {albumsSearchResult.map((album) => (
+              <Album key={album.id} album={album} onDetail={showDetail} />
+            ))}
+          </ul>
+        ) : (
+          <p>Try searching</p>
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
       <div>
         {isDetail ? (
           <AlbumDetail

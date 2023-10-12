@@ -28,7 +28,7 @@ export default function AlbumDetail({ albumId, onBack }) {
 
     // Call the fetchData function when the component is mounted
     fetchData();
-  }, []);
+  }, [albumId]);
   return (
     <>
       {isLoading ? (

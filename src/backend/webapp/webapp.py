@@ -1,10 +1,9 @@
+import logging
 from typing import List
 
 import sqlalchemy
 import uvicorn
 from db_utils import db as database
-
-# from db_utils.db import SessionLocal
 from db_utils.models import AlbumModel
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +11,9 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from webapp.crud import crud
 from webapp.schemas import album_schema
+
+# from db_utils.db import SessionLocal
+
 
 app = FastAPI()
 
@@ -57,5 +59,15 @@ def read_albums_by_year(
 
 @app.get("/album/", response_model=album_schema.AlbumBase)
 def get_album_by_id(id: int, db: Session = Depends(get_db)):
+    logging.info(f"searching for {id}")
     album = crud.get_album_by_id(db=db, id=id)
     return album
+
+
+@app.get("/album/title/", response_model=list[album_schema.AlbumBase])
+def get_albums_by_title(
+    title: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)
+):
+    limit = min(limit, 100)
+    albums = crud.find_albums_by_title(db=db, title=title, skip=skip, limit=limit)
+    return albums
